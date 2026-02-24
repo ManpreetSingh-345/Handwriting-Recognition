@@ -1,0 +1,13 @@
+# Ignore all PyTorch weights
+*.pth
+*.pt
+
+# Ignore all dataset folders and large file types
+data/
+backend/src/data/
+*.ubyte
+*.zip
+
+# Ignore test images
+*.png
+*.jpg

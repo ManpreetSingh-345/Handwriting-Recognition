@@ -1,15 +1,23 @@
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
+import torchvision.transforms.functional as F
 from torch.utils.data import DataLoader
 from model import CharacterCNN
 # imports 
 # IM LOSING IT 
+#Yo chat we lowkey got ts to work
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # chooses either gpu or cpu to use to train model
 
-transform = transforms.Compose([transforms.Resize((28, 28)),transforms.ToTensor(),]) # makes image into 28 by 28 picture and gives pixel values (tensor)
+transform = transforms.Compose([
+    transforms.Grayscale(num_output_channels=1),
+    transforms.Lambda(lambda img: F.rotate(img, -90, fill=0)), # Rotate 90 degrees clockwise
+    transforms.Lambda(lambda img: F.hflip(img)),               # Flip horizontally
+    transforms.ToTensor(),
+])
 
 train_dataset = datasets.EMNIST(# this is to train model on what to figure out the object bigger version of MNIST
     root="./data",              # stores in file named data
@@ -17,12 +25,21 @@ train_dataset = datasets.EMNIST(# this is to train model on what to figure out t
     train=True,                 # trains model and downlaods 
     download=True,
     transform=transform) 
+print(train_dataset.classes)
 
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True) # feeds data in small batches to learn
 
 model = CharacterCNN().to(device) # makes the model 
 criterion = nn.CrossEntropyLoss() # checks how off model is 
 optimizer = optim.Adam(model.parameters(), lr=0.001) # tries to improve the model
+
+# This part i believe should fix the saving problem
+checkpoint_path = "character_model.pth" # this makes the path to the save file
+if os.path.exists(checkpoint_path): # this checks if it exists 
+    model.load_state_dict(torch.load(checkpoint_path, map_location=device)) # this loads the original state it was in from the last run
+    print("Previous weights found! Resuming training...")
+else:
+    print("No saved model found. Starting from scratch!")
 
 epochs = 5 #makes the model go through dataset 5 times
 
