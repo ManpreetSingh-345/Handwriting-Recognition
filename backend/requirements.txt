@@ -1,1 +1,1 @@
-Testing
+You need have a virtual enviroemnt with all pytorch libraries neccassry to run the code
