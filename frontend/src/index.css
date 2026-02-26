@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@font-face {
+    font-family: neue-machina;
+    src: url('./fonts/PPNeueMachina-InktrapRegular.otf');
+} 
+
+@theme {
+    --font-neue-machina: neue-machina, "sans-serif"
+}
