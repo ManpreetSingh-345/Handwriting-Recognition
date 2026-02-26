@@ -1,0 +1,18 @@
+
+{
+    "compilerOptions": {
+      "jsx": "react-jsx",
+      "isolatedModules": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "moduleResolution": "node",
+      "allowJs": true,
+      "checkJs": false,
+      "noEmit": true,
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["./src/*"]
+      }
+    },
+    "include": ["src/**/*"]
+}
