@@ -22,11 +22,19 @@ function App() {
           <div className=" font-bold text-[38px] text-[#ff5757]">
             SMART WRITE
           </div>
-          <nav className="flex justify-between gap-10">
-            <button className="hover:cursor-pointer">Dashboard</button>
-            <button className="hover:cursor-pointer">API</button>
-            <button className="hover:cursor-pointer">Authors</button>
-            <button className="hover:cursor-pointer">Contact</button>
+          <nav className="flex justify-between gap-5">
+            <button className="ease-in duration-150 hover:bg-gray-800 hover:cursor-pointer px-4 py-2 rounded-2xl">
+              Dashboard
+            </button>
+            <button className="ease-in duration-150 hover:bg-gray-800 hover:cursor-pointer px-4 py-2 rounded-2xl">
+              API
+            </button>
+            <button className="ease-in duration-150 hover:bg-gray-800 hover:cursor-pointer px-4 py-2 rounded-2xl">
+              Authors
+            </button>
+            <button className="ease-in duration-150 hover:bg-gray-800 hover:cursor-pointer px-4 py-2 rounded-2xl">
+              Contact
+            </button>
           </nav>
         </header>
         {/* Hero */}
@@ -56,7 +64,9 @@ function App() {
                 RESULTS WILL APPEAR HERE
               </div>
               <div>
-                <button className="flex-1">View in Dashboard</button>
+                <button className="flex-1 ease-in duration-150 hover:bg-gray-800 hover:cursor-pointer px-4 py-2 rounded-2xl">
+                  View in Dashboard
+                </button>
               </div>
             </div>
           </div>
@@ -103,7 +113,7 @@ function App() {
           </div>
         </article>
       </section>
-      <section className="bg-radial-[at_500%_50%] from-50% from-[#f84e50] to-70% to-black">
+      <section className="bg-radial-[at_80%_90%] from-50% from-[#d42f32] to-70% to-black">
         <article className="flex justify-center py-20">
           <div className="flex flex-col text-center min-w-100 max-w-200 gap-5">
             <div className="text-3xl">
@@ -118,39 +128,108 @@ function App() {
               both technical skill and real-world applicability.
             </div>
             <div>
-              <button className="hover:cursor-pointer bg-[#202020] px-5 py-2 rounded-3xl text-sm">
+              <button className="ease-in duration-150 hover:text-black hover:bg-white hover:cursor-pointer bg-[#202020] px-5 py-2 rounded-3xl text-sm">
                 Authors
               </button>
             </div>
           </div>
         </article>
-        <section className="flex flex-col items-center gap-5 bg-radial-[at_-500%_50%] from-50% from-[#f84e50] to-70% to-black">
+        <section className="flex flex-col items-center gap-5 bg-radial-[at_80%_-120%] from-50% from-[#d42f32] to-70% to-black pt-20">
           <div className="text-3xl">
-            <span className="text-[#ff5757]">API</span> Integration
+            <span className="text-[#ff5757] underline">API</span> Integration
           </div>
           <div>
             Our industry-leading models are designed for real-world utility.
           </div>
-          <div></div>
+          <div className="flex gap-10 text-black text-sm">
+            <div className="bg-linear-to-br from-[#fff7ad] to-[#ffa9f9] px-5 pr-20 py-7 rounded-3xl flex flex-col gap-10">
+              <div>
+                <h1 className="text-4xl font-space-mono pb-5 font-bold">
+                  SW-57
+                </h1>
+                <p>Flagship Model</p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <div>
+                  <p>
+                    <span className="font-bold">Input:</span> $1.75 per 1M
+                    tokens
+                  </p>
+                  <p>Output: $14.00 per 1M tokens</p>
+                </div>
+                <div>
+                  <p>400K context length</p>
+                  <p>128K max output tokens</p>
+                </div>
+                <div>
+                  <p>Knowledge cut-off: Aug 31, 2025</p>
+                </div>
+              </div>
+              <div>
+                <button className="text-white bg-black px-3 py-2 rounded-2xl ease-in duration-150 hover:text-black hover:bg-white hover:cursor-pointer">
+                  KNOW MORE
+                </button>
+              </div>
+            </div>
+            <div className="bg-linear-to-br from-[#ff7c90] to-[#ffe1a4] px-5 pr-20 py-7 rounded-3xl flex flex-col gap-10">
+              <div>
+                <h1 className="text-4xl font-space-mono pb-5 font-bold">
+                  DW-37
+                </h1>
+                <p>Initial Model</p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <div>
+                  <p>Input: $0.25 per 1M tokens</p>
+                  <p>Output: $2.00 per 1M tokens</p>
+                </div>
+                <div>
+                  <p>400K context length</p>
+                  <p>128K max output tokens</p>
+                </div>
+                <div>
+                  <p>Knowledge cut-off: Sep 30, 2024</p>
+                </div>
+              </div>
+              <div>
+                <button className="text-white bg-black px-3 py-2 rounded-2xl ease-in duration-150 hover:text-black hover:bg-white hover:cursor-pointer">
+                  KNOW MORE
+                </button>
+              </div>
+            </div>
+          </div>
         </section>
       </section>
-      <footer className="flex bg-[#202020] rounded-3xl p-20 px-60">
+      {/* Footer Section */}
+      <footer className="flex bg-[#202020] rounded-3xl p-20 px-60 mt-15">
         <div className="flex-3 flex flex-col gap-5 align-baseline [&_button]:hover:cursor-pointer">
-          <div className=" font-bold text-2xl text-[#ff5757]">SMART WRITE</div>
-          <div>
-            <button>Home</button>
+          <div className=" font-bold text-2xl text-[#ff5757] px-4">
+            SMART WRITE
           </div>
           <div>
-            <button>Dashboard</button>
+            <button className="ease-in duration-150 hover:bg-gray-800 px-4 py-2 rounded-2xl">
+              Home
+            </button>
           </div>
           <div>
-            <button>API</button>
+            <button className="ease-in duration-150 hover:bg-gray-800 px-4 py-2 rounded-2xl">
+              Dashboard
+            </button>
           </div>
           <div>
-            <button>Authors</button>
+            <button className="ease-in duration-150 hover:bg-gray-800 px-4 py-2 rounded-2xl">
+              API
+            </button>
           </div>
           <div>
-            <button>Contact</button>
+            <button className="ease-in duration-150 hover:bg-gray-800 px-4 py-2 rounded-2xl">
+              Authors
+            </button>
+          </div>
+          <div>
+            <button className="ease-in duration-150 hover:bg-gray-800 px-4 py-2 rounded-2xl">
+              Contact
+            </button>
           </div>
         </div>
         <div className="flex-1 flex gap-5 place-self-end justify-end *:hover:cursor-pointer">
