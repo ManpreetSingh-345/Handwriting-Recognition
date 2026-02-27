@@ -1,6 +1,6 @@
 # Smart Write: Handwriting Recognition
 
-This full-stack application allows users to draw or upload images of text and accurately recognize handwriting characters using a custom Convolutional Neural Network (CNN).
+This full-stack application allows users to draw or upload images of text and accurately recognize handwriting characters using a custom Convolutional Neural Network (CNN). Made by aspiring Students.
 
 ## Features
 - **Frontend App**: Interactive user interface built with modern React (Vite, Tailwind CSS v4). Features direct file uploads and UI to output predictions.
