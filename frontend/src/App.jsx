@@ -1,6 +1,8 @@
 import React from "react";
 import uploadIcon from "./assets/upload-icon.svg";
 import tabsIcon from "./assets/tabs.png";
+import twitterIcon from "./assets/twitter.png";
+import instagramIcon from "./assets/instagram.webp";
 import { GridPattern } from "@/components/ui/grid-pattern";
 
 function App() {
@@ -132,6 +134,34 @@ function App() {
           <div></div>
         </section>
       </section>
+      <footer className="flex bg-[#202020] rounded-3xl p-20 px-60">
+        <div className="flex-3 flex flex-col gap-5 align-baseline [&_button]:hover:cursor-pointer">
+          <div className=" font-bold text-2xl text-[#ff5757]">SMART WRITE</div>
+          <div>
+            <button>Home</button>
+          </div>
+          <div>
+            <button>Dashboard</button>
+          </div>
+          <div>
+            <button>API</button>
+          </div>
+          <div>
+            <button>Authors</button>
+          </div>
+          <div>
+            <button>Contact</button>
+          </div>
+        </div>
+        <div className="flex-1 flex gap-5 place-self-end justify-end *:hover:cursor-pointer">
+          <button>
+            <img src={twitterIcon} alt="X/Twitter icon" className="h-6 w-6" />
+          </button>
+          <button>
+            <img src={instagramIcon} alt="Instagram icon" className="h-6 w-6" />
+          </button>
+        </div>
+      </footer>
     </main>
   );
 }
