@@ -24,6 +24,8 @@ class CharacterCNN(nn.Module):
 
          self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1) #layer 2
 
+         self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1) 
+
          #splits into 2x2 matrix and takes highest value 
          #then puts together the highest values in a 4x4 matrix 
          #by doing this it throws away irrelavent data and figures out the pattern
@@ -34,12 +36,13 @@ class CharacterCNN(nn.Module):
          #all maps are in a 7x7 matrix
          #then takes highest value maps and uses that to figure the 128 most important pixels
 
-         self.fc1 = nn.Linear(64 * 7 * 7, 128)
+         self.fc1 = nn.Linear(128 * 8 * 8, 128)
          self.fc2 = nn.Linear(128, 47) #takes and figures out the 47 diffrent possible outcomes 
 
     def forward(self,x): #next steps gets pushed here
         x = self.pool(F.relu(self.conv1(x))) #takes patterns turns to numbers then gets rid of unused number and shrinks image using layer 1(conv.1)
         x = self.pool(F.relu(self.conv2(x))) #same thing with layer 2
+        x = self.pool(F.relu(self.conv3(x))) #same thing with layer 3
 
         x = x.view(x.size(0), -1) #weighthed calculations by making flat
         x = F.relu(self.fc1(x)) #get rid of extra and commits to 128 
