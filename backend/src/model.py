@@ -45,3 +45,6 @@ class CharacterCNN(nn.Module):
         x = F.relu(self.fc1(x)) #get rid of extra and commits to 128 
         x = self.fc2(x) #decides what character it is
         return x
+    
+        #x = self.pool(F.relu(self.conv3(x))) #same thing with layer 3 this at bottom next to other pool area
+        #self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1) #layer 3 this should be at top area (Experiment with conv 3 and pooling to see if it improves accuracy, but be mindful of overfitting)
