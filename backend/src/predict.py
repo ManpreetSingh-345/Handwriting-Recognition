@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 import string
@@ -23,7 +24,9 @@ transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((28, 28)),
     InvertColor(), # This will flip the image and change the whites to blacks and vice versa
-    transforms.ToTensor(),]) #process the image 
+    transforms.ToTensor(), #process the image
+    transforms.Normalize((0.5,), (0.5,))  #Normalize to match training transform 
+])
 
 def predict(image_path): # guess the image 
     image = Image.open(image_path)
@@ -32,6 +35,14 @@ def predict(image_path): # guess the image
 
     with torch.no_grad():
         output = model(image)
+
+        #Convert raw scores to probabilities using softmax
+        #this lets us see how confident the model is, not just what it picked
+        probabilities = F.softmax(output, dim=1)
+
+        #Get top 3 guesses instead of just 1
+        top3_probs, top3_indices = torch.topk(probabilities, 3, dim=1)
+
         _, predicted = torch.max(output, 1)
 
     predicted_class = predicted.item()
@@ -42,6 +53,14 @@ def predict(image_path): # guess the image
         result = "Unknown"
 
     print("Prediction:", result)
+    #Print top 3 predictions with confidence percentages
+    #Useful for catching cases where 2 letters look similar (like 'O' vs '0')
+    print("Top 3 guesses:")
+    for i in range(3):
+        idx = top3_indices[0][i].item()
+        prob = top3_probs[0][i].item() * 100
+        label = classes[idx] if idx < len(classes) else "Unknown"
+        print(f"  #{i+1}: '{label}'  ({prob:.1f}% confidence)")
     return result
 
 if __name__ == "__main__": #only runs code if use this file to run specifically 
