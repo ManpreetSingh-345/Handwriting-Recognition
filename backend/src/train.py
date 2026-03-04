@@ -65,7 +65,7 @@ else:
 optimizer = optim.Adam(model.parameters(), lr=0.0005, weight_decay=1e-5)                               # L2 regularization to prevent overfitting
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2) # reduce learning rate if validation loss doesnt improve for 2 epochs
 
-epochs = 5 # makes the model go through the dataset 5 times
+epochs = 20 # makes the model go through the dataset 5 times
 
 
 for epoch in range(epochs):
@@ -115,7 +115,7 @@ for epoch in range(epochs):
 
     print(f"\nDevice: {device}")
     print(f"Learning Rate: {current_lr}")
-    print(f"Epoch {epoch+1}\n | Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_accuracy:.2f}%\n | Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%")
+    print(f"Epoch {epoch+1}/{epochs} \n | Train Loss: {epoch_loss:.4f}, Train Acc: {epoch_accuracy:.2f}%\n | Val Loss: {val_loss:.4f},                   Val Acc: {val_accuracy:.2f}%")
 
     if val_accuracy > best_accuracy: # if the model is better than the last one it saves it
         best_accuracy = val_accuracy

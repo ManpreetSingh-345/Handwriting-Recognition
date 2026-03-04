@@ -7,7 +7,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the blueprint and the best weights
 model = CharacterCNN().to(device)
-model.load_state_dict(torch.load("best_character_model.pth", map_location=device))
+checkpoint = torch.load("best_character_model.pth", map_location=device, weights_only=False)
+model.load_state_dict(checkpoint["model_state"])
 model.eval() 
 print("Model loaded successfully!")
 
@@ -54,9 +55,11 @@ def predict(image_path):
     return result
 
 if __name__ == "__main__": 
-    image_path = "Image.png"  
-    
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image", help="Path to image file")
+    args = parser.parse_args()
     try:
-        predict(image_path)
+        predict(args.image)
     except FileNotFoundError:
-        print(f"Error: Could not find '{image_path}'. Check your file path!")
+        print(f"Error: Could not find '{args.image}'. Check your file path!")

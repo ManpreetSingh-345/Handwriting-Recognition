@@ -1,0 +1,16 @@
+File Paths for testing predict.py:
+
+augustus.png
+"C:\Users\Admin\Documents\Handwriting Project\Handwriting-Recognition\backend\src\Predict\augustus.png"
+
+h.png
+"C:\Users\Admin\Documents\Handwriting Project\Handwriting-Recognition\backend\src\Predict\h.png"
+
+karj.png
+"C:\Users\Admin\Documents\Handwriting Project\Handwriting-Recognition\backend\src\Predict\karj.png"
+
+m.png
+"C:\Users\Admin\Documents\Handwriting Project\Handwriting-Recognition\backend\src\Predict\m.png"
+
+r.png
+"C:\Users\Admin\Documents\Handwriting Project\Handwriting-Recognition\backend\src\Predict\r.png"
