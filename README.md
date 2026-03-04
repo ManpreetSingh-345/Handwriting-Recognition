@@ -6,7 +6,8 @@ This full-stack application allows users to draw or upload images of text and ac
 - **Frontend App**: Interactive user interface built with modern React (Vite, Tailwind CSS v4). Features direct file uploads and UI to output predictions.
 - **Deep Learning Model**: A custom Convolutional Neural Network (`CharacterCNN`) built with PyTorch.
 - **47 Distinct Classes**: Capable of recognizing a combination of digits and uppercase letters natively.
-- **Ready-To-Run Integration**: Contains pre-trained compiled network weights (`character_model.pth`) to immediately begin inferencing capabilities. 
+- **Ready-To-Run Integration**: Contains pre-trained compiled network weights (`best_character_model.pth`) to immediately begin inferencing capabilities.
+- **Optimized Training Pipeline**: Features a validation loop, learning rate scheduling, robust stateful checkpointing, and GPU/Windows compatibility fixes.
 
 ## Technology Stack
 
@@ -28,7 +29,7 @@ Handwriting-Recognition/
 │   │   ├── train.py                # Pipeline script to train the CNN from scratch
 │   │   ├── predict.py              # Script that loads an image and outputs inference
 │   │   ├── model.py                # The CharacterCNN architecture declaration
-│   │   └── character_model.pth     # High-accuracy pre-trained CNN model
+│   │   └── best_character_model.pth# High-accuracy pre-trained CNN model
 │   └── requirements.txt            # Core Python dependencies
 ├── frontend/
 │   ├── src/
@@ -79,9 +80,10 @@ The output character matching will display directly in your console.
 
 ## Convolutional Architecture Details
 The machine learning component leverages a fully custom `CharacterCNN` architecture traversing via:
-- **Phase 1 vision mapping**: Initial `Conv2d` applying 3x3 kernel dimension data extraction.
+- **Phase 1 vision mapping**: Initial `Conv2d` applying 3x3 kernel dimension data extraction, enhanced with BatchNorm and memory-efficient `inplace` activations.
 - **Max pooling matrix sizing**: Filters visual noise, stripping dimensions and resolving local maxima across 2x2 blocks.
 - **Phase 2 deeper analysis**: A supplementary `Conv2d` scales down to 64 pattern-detecting output channels. 
-- **Fully Connected (FC) Linear nodes**: Projects down to the top 128 identifying features, classifying final geometry characteristics into 1 of 47 valid label probabilities.
+- **Phase 3 feature extraction**: A third `Conv2d` layer scales to 128 channels before being reduced by Adaptive Average Pooling.
+- **Fully Connected (FC) Network**: A 3-layer dense block progressively narrowing from 256 to 128 classifying features, leveraging Dropout for robust regularization, and outputting final geometry characteristics into 1 of 47 valid label probabilities.
   
 All model predictions inject automatic grayscale mapping and inverse color transformations to reliably normalize dark-ink on bright-paper inputs.

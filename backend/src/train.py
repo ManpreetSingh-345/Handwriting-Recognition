@@ -2,6 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import multiprocessing
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from model import CharacterCNN
@@ -42,8 +43,10 @@ val_dataset = datasets.EMNIST( # separate dataset the model has never seen, used
     download=True,
     transform=val_transform) # clean pipeline, no augmentation
 
-train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True, num_workers=0, pin_memory=True)  # 256 images per batch, num_workers=0 required on Windows, pin_memory speeds up CPU->GPU transfer
-val_loader = DataLoader(val_dataset, batch_size=256, shuffle=False, num_workers=0, pin_memory=True)     # no shuffle for validation so results are consistent
+num_workers = 0 if os.name == 'nt' else multiprocessing.cpu_count() # this is set to 0 specifically to avoid a windows multiprocessing bug.
+
+train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True, num_workers=num_workers, pin_memory=True)  # 256 images per batch, num_workers=cpu cores available, pin_memory speeds up CPU->GPU transfer
+val_loader = DataLoader(val_dataset, batch_size=256, shuffle=False, num_workers=num_workers, pin_memory=True)     # no shuffle for validation so results are consistent
 
 model = CharacterCNN().to(device) # creates the model and sends it to the device (GPU or CPU)
 criterion = nn.CrossEntropyLoss() # calculates how wrong the model is by comparing its output to the correct answer
