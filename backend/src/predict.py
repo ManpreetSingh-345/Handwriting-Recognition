@@ -3,11 +3,17 @@ from PIL import Image
 from model import CharacterCNN
 from preprocess import transform 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
 
 # Load the blueprint and the best weights
 model = CharacterCNN().to(device)
-model.load_state_dict(torch.load("best_character_model.pth", map_location=device))
+checkpoint = torch.load("best_character_model.pth", map_location=device, weights_only=False)
+model.load_state_dict(checkpoint["model_state"])
 model.eval() 
 print("Model loaded successfully!")
 
@@ -54,7 +60,7 @@ def predict(image_path):
     return result
 
 if __name__ == "__main__": 
-    image_path = "/Users/hamzarizvi/Desktop/Image.png"  
+    image_path = "/Users/zeroascend/Documents/Project/Handwriting-Recognition/backend/src/Image3.png"  
     
     try:
         predict(image_path)

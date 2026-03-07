@@ -3,9 +3,15 @@ from PIL import Image, ImageOps
 
 class EMNISTFormat:
     def __call__(self, img):
-        # 1. Grayscale and invert (white ink, black background)
+        # 1. Grayscale
         img = ImageOps.grayscale(img)
-        #img = ImageOps.invert(img)
+        
+        # Look at the top-left pixel to figure out the background color.
+        # If the background is light (>127), invert the whole image
+        bg_pixel = img.getpixel((0, 0))
+        if bg_pixel > 127:
+            img = ImageOps.invert(img)
+        # ----------------------------
         
         # 2. Crush the shadows (binarization)
         threshold = 100 
