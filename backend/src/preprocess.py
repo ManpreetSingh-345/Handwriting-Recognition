@@ -5,7 +5,7 @@ class EMNISTFormat:
     def __call__(self, img):
         # 1. Grayscale and invert (white ink, black background)
         img = ImageOps.grayscale(img)
-        img = ImageOps.invert(img)
+        #img = ImageOps.invert(img)
         
         # 2. Crush the shadows (binarization)
         threshold = 100 
