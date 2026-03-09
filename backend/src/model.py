@@ -46,8 +46,9 @@ class CharacterCNN(nn.Module):
          self.fc3 = nn.Linear(128, 47) #takes and figures out the 47 diffrent possible outcomes
 
     def forward(self,x): #next steps gets pushed here
-        x = (F.relu(self.bn1(self.conv1(x)), inplace=True))#takes patterns turns to numbers then gets rid of unused number and shrinks image using layer 1(conv.1)
-        x = (F.relu(self.bn2(self.conv2(x)), inplace=True)) #same thing with layer 2
+        x = (F.relu(self.bn1(self.conv1(x))))#takes patterns turns to numbers then gets rid of unused number and shrinks image using layer 1(conv.1)
+        x=self.pool(x)
+        x = (F.relu(self.bn2(self.conv2(x)))) #same thing with layer 2
         x= self.pool(x)
 
         x = (F.relu(self.bn3(self.conv3(x)), inplace=True)) #same thing with layer 3
@@ -61,3 +62,5 @@ class CharacterCNN(nn.Module):
         x=self.dropout2(x) #prevents overfitting by randomly dropping nuerons
         x = self.fc3(x) #decides what character it is
         return x
+       
+       

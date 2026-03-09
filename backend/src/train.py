@@ -88,7 +88,7 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=0.0005, weight_decay=1e-5) # L2 regularization to prevent overfitting
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)# Reduce learning rate if validation loss doesn't improve for 2 epochs
 
-    epochs = 5 #makes the model go through dataset 5 times
+    epochs = 25 #makes the model go through dataset 5 times
     best_accuracy = 0.0 # starts accuracy count from 0
 
 

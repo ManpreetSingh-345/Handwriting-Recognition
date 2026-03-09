@@ -25,7 +25,7 @@ def predict(image_path):
     print(f"\nAnalyzing '{image_path}'...")
     
     # 1. Load the raw image
-    raw_image = Image.open(image_path)
+    raw_image = Image.open(image_path).convert("L")
     
     # 2. Process it using your custom external module!
     processed_image = transform(raw_image)
@@ -39,14 +39,10 @@ def predict(image_path):
         # Calculate probabilities for the Top 3 Guesses
         probabilities = torch.softmax(output, dim=1)
         top3_probs, top3_indices = torch.topk(probabilities, 3, dim=1)
-        _, predicted = torch.max(output, 1)
-
-    predicted_class = predicted.item()
-
-    if predicted_class < len(classes):
-        result = classes[predicted_class]
-    else:
-        result = "Unknown"
+        
+        predicted = top3_indices[0][0].item()
+        confidence = top3_probs[0][0].item()*100
+        result = classes[predicted]
 
     print(f"--> Final Prediction: {result} <--\n")
     
@@ -60,7 +56,7 @@ def predict(image_path):
     return result
 
 if __name__ == "__main__": 
-    image_path = "/Users/zeroascend/Documents/Project/Handwriting-Recognition/backend/src/Image3.png"  
+    image_path = "/Users/hamzarizvi/desktop/e.png"  
     
     try:
         predict(image_path)
