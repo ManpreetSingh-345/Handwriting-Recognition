@@ -27,9 +27,15 @@ transform = transforms.Compose([ # Custom pipeline to match EMNIST formatting
     transforms.Grayscale(num_output_channels=1), # Convert to grayscale
     transforms.Lambda(lambda img: F.rotate(img, -90, fill=0)),  # Rotate to match EMNIST orientation
     transforms.Lambda(lambda img: F.hflip(img)), # Flip horizontally to match EMNIST orientation             
-    transforms.RandomAffine(degrees=15, translate=(0.1, 0.1), scale=(0.8, 1.2)), # Data augmentation to improve generalization
-    transforms.ToTensor(), # Convert to tensor
-    transforms.Normalize((0.5,), (0.5,)) # Normalize to match EMNIST's mean and std for better training stability
+    transforms.RandomAffine(
+        degrees=20,                      # was 15
+        translate=(0.15, 0.15),          # was 0.1
+        scale=(0.7, 1.3),                # was 0.8-1.2
+        shear=10                         # NEW: handles slanted writing
+    ),
+    transforms.RandomPerspective(distortion_scale=0.2, p=0.3),  # NEW: handles camera angle
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,))
 ])
 
 # same pipeline but no augmentation, we want clean images for validation
@@ -86,10 +92,9 @@ if __name__ == '__main__':
         best_accuracy = 0.0
 
     optimizer = optim.Adam(model.parameters(), lr=0.0005, weight_decay=1e-5) # L2 regularization to prevent overfitting
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)# Reduce learning rate if validation loss doesn't improve for 2 epochs
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)# Reduce learning rate if validation loss doesn't improve for 2 epochs
 
     epochs = 25 #makes the model go through dataset 5 times
-    best_accuracy = 0.0 # starts accuracy count from 0
 
 
     for epoch in range(epochs):
@@ -139,6 +144,7 @@ if __name__ == '__main__':
         print(f"\nDevice: {device}")
         print(f"Learning Rate: {current_lr}")
         print(f"Epoch {epoch+1}, Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.2f}%") 
+        print(f"Val Loss: {val_loss:.4f}, Val Accuracy: {val_accuracy:.2f}%")
     
         if val_accuracy > best_accuracy: # if the model is better than the last one it saves it
             best_accuracy = val_accuracy

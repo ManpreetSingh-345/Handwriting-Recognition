@@ -56,7 +56,7 @@ def predict(image_path):
     return result
 
 if __name__ == "__main__": 
-    image_path = "/Users/hamzarizvi/desktop/c.png"  
+    image_path = "/Users/hamzarizvi/desktop/h.png"  
     
     try:
         predict(image_path)
