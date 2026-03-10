@@ -51,7 +51,7 @@ class CharacterCNN(nn.Module):
         x = (F.relu(self.bn2(self.conv2(x)))) #same thing with layer 2
         x= self.pool(x)
 
-        x = (F.relu(self.bn3(self.conv3(x)),)) #same thing with layer 3
+        x = (F.relu(self.bn3(self.conv3(x)))) #same thing with layer 3
         x= self.pool(x)
         x = self.global_pool(x) 
 
