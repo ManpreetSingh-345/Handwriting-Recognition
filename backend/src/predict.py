@@ -1,7 +1,7 @@
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
 from model import CharacterCNN
-from preprocess import transform 
+from preprocess import transform
 
 if torch.cuda.is_available():
     device = torch.device("cuda")
@@ -25,7 +25,13 @@ def predict(image_path):
     print(f"\nAnalyzing '{image_path}'...")
     
     # 1. Load the raw image
-    raw_image = Image.open(image_path).convert("L")
+    raw_image = Image.open(image_path)
+
+    # 1. Load the raw image
+    raw_image = Image.open(image_path)
+    
+    # Forces Python to physically rotate the image if a smartphone saved it sideways
+    raw_image = ImageOps.exif_transpose(raw_image)
     
     # 2. Process it using your custom external module!
     processed_image = transform(raw_image)
@@ -56,7 +62,7 @@ def predict(image_path):
     return result
 
 if __name__ == "__main__": 
-    image_path = "/Users/hamzarizvi/desktop/h.png"  
+    image_path = "/Users/zeroascend/Documents/Project/Handwriting-Recognition/backend/src/Image2.png"  
     
     try:
         predict(image_path)

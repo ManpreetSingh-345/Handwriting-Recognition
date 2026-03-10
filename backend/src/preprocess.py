@@ -1,78 +1,98 @@
-import torchvision.transforms as transforms
-from PIL import Image, ImageOps
+import cv2
 import numpy as np
-from scipy.ndimage import binary_dilation, binary_erosion
+import torchvision.transforms as transforms
+from PIL import Image
 
 class EMNISTFormat:
     def __call__(self, img):
-        # 1. Convert to grayscale
-        img = ImageOps.grayscale(img)
-        img_np = np.array(img)
+        # 1. Convert to float32
+        img_np = np.array(img.convert('RGB')).astype(np.float32) 
+        
+        # 2. Blur to crush harsh JPEG artifacts
+        blurred = cv2.GaussianBlur(img_np, (5, 5), 0)
+        
+        # 3. Sample the extreme edges to find the background color
+        h, w, _ = blurred.shape
+        border = np.concatenate([
+            blurred[0:3, :].reshape(-1, 3), 
+            blurred[-3:, :].reshape(-1, 3), 
+            blurred[:, 0:3].reshape(-1, 3), 
+            blurred[:, -3:].reshape(-1, 3)
+        ])
+        bg_color = np.median(border, axis=0)
+        
+        # 4. Measure difference & normalize
+        diff = np.linalg.norm(blurred - bg_color, axis=2)
+        diff_gray = cv2.normalize(diff, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+        
+        # 5. Otsu's Method
+        _, binary = cv2.threshold(diff_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # 6. Find boundaries
+        contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not contours: 
+            return Image.fromarray(np.zeros((28, 28), dtype=np.uint8))
+            
+        # Filter out dust by measuring height/width
+        valid_contours = []
+        for c in contours:
+            _, _, w_c, h_c = cv2.boundingRect(c)
+            if w_c > 5 or h_c > 5:
+                valid_contours.append(c)
+                
+        if not valid_contours:
+            valid_contours = contours 
+            
+        # Combine all valid strokes into one giant shape array
+        all_points = np.vstack(valid_contours)
+        x, y, w_box, h_box = cv2.boundingRect(all_points)
+        
+        if w_box < 2 or h_box < 2:
+             return Image.fromarray(np.zeros((28, 28), dtype=np.uint8))
 
-        # 2. Corner-based background detection (more robust than most-common-pixel)
-        h, w = img_np.shape
-        corners = [
-            img_np[0:5, 0:5],
-            img_np[0:5, w-5:w],
-            img_np[h-5:h, 0:5],
-            img_np[h-5:h, w-5:w]
-        ]
-        bg_value = np.median(np.concatenate([c.flatten() for c in corners]))
-
-        # 3. Invert if background is light
-        if bg_value > 127:
-            img_np = 255 - img_np
-
-        # 4. Add border before cropping so edge-touching letters don't break
-        img_np = np.pad(img_np, pad_width=6, mode='constant', constant_values=0)
-
-        # 5. Otsu-style adaptive binarization (handles varying contrast better)
-        flat = img_np.flatten()
-        threshold = np.percentile(flat[flat > 10], 40)  # ignores near-black background noise
-        binary = (img_np > threshold).astype(np.uint8)
-
-        # 6. Stroke normalization — BEFORE resizing
-        stroke_density = binary.sum() / binary.size
-        print(f"Stroke density: {stroke_density:.4f}")  # debug - tells you how thin
-
-        if stroke_density > 0.3:
-            binary = binary_erosion(binary, iterations=1).astype(np.uint8)
-        elif stroke_density < 0.02:    # very thin like your A
-            binary = binary_dilation(binary, iterations=5).astype(np.uint8)
-        elif stroke_density < 0.05:    # thin like your H
-            binary = binary_dilation(binary, iterations=4).astype(np.uint8)
-        elif stroke_density < 0.12:
-            binary = binary_dilation(binary, iterations=2).astype(np.uint8)
-
-        img_np = (binary * 255).astype(np.uint8)
-        img = Image.fromarray(img_np)
-        img.save("debug_before_resize.png")
-
-        # 7. Crop tightly to the letter
-        bbox = img.getbbox()
-        if bbox is None:
-            return img.resize((28, 28))
-        img_cropped = img.crop(bbox)
-
-        # 8. Resize longest edge to 20px
-        img_cropped = img_cropped.resize((20, 20), Image.Resampling.NEAREST)
-
-        # 9. Re-binarize after resize (LANCZOS introduces gray anti-aliasing)
-        img_np2 = np.array(img_cropped)
-        img_np2 = np.where(img_np2 > 127, 255, 0).astype(np.uint8)
-        img_cropped = Image.fromarray(img_np2)
-
-        # 10. Center in 28x28 canvas
-        new_img = Image.new('L', (28, 28), color=0)
-        paste_x = (28 - img_cropped.width) // 2
-        paste_y = (28 - img_cropped.height) // 2
-        new_img.paste(img_cropped, (paste_x, paste_y))
-
-        new_img.save("debug_processed.png")
-
-        return new_img
-
-
+        cropped = binary[y:y+h_box, x:x+w_box]
+        
+        # Calculate exactly how severely we are shrinking this image
+        scale = 20.0 / max(w_box, h_box)
+        inverse_scale = max(1, int(1.0 / scale))
+        
+        stroke_density = np.sum(cropped > 0) / (w_box * h_box)
+        
+        # Dynamically build a massive dilation kernel if the image is massive
+        kernel_size = max(2, int(inverse_scale * 0.5)) 
+        kernel = np.ones((kernel_size, kernel_size), np.uint8)
+        
+        if stroke_density < 0.15:
+            cropped = cv2.dilate(cropped, kernel, iterations=1)
+        elif stroke_density > 0.60:
+            cropped = cv2.erode(cropped, kernel, iterations=1)
+            
+        # 8. Resize longest edge to 20 pixels
+        new_w, new_h = max(1, int(w_box * scale)), max(1, int(h_box * scale))
+        resized = cv2.resize(cropped, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        
+        # Stretches faint gray smudges back into bright white 255 ink
+        resized = cv2.normalize(resized, None, 0, 255, cv2.NORM_MINMAX)
+        
+        # 9. Paste into canvas (Bounding Box Centering)
+        canvas = np.zeros((28, 28), dtype=np.uint8)
+        start_y = (28 - new_h) // 2
+        start_x = (28 - new_w) // 2
+        canvas[start_y:start_y+new_h, start_x:start_x+new_w] = resized
+        
+        # 10. Center of Mass Shift
+        M = cv2.moments(canvas)
+        if M["m00"] != 0:
+            cx = M["m10"] / M["m00"]
+            cy = M["m01"] / M["m00"]
+            dx = 14.0 - cx
+            dy = 14.0 - cy
+            M_trans = np.float32([[1, 0, dx], [0, 1, dy]])
+            canvas = cv2.warpAffine(canvas, M_trans, (28, 28))
+        
+        cv2.imwrite("debug_processed_opencv.png", canvas)
+        return Image.fromarray(canvas)
+    
 transform = transforms.Compose([
     EMNISTFormat(),
     transforms.ToTensor(),
