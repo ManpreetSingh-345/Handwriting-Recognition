@@ -26,9 +26,6 @@ def predict(image_path):
     
     # 1. Load the raw image
     raw_image = Image.open(image_path)
-
-    # 1. Load the raw image
-    raw_image = Image.open(image_path)
     
     # Forces Python to physically rotate the image if a smartphone saved it sideways
     raw_image = ImageOps.exif_transpose(raw_image)
