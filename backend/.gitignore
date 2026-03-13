@@ -11,3 +11,5 @@ backend/src/data/
 # Ignore test images
 *.png
 *.jpg
+
+/venv
