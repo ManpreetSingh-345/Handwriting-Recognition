@@ -2,8 +2,8 @@ import os
 import torch
 import numpy as np
 from PIL import Image, ImageOps
-from model import CharacterCNN
-from preprocess import transform
+from src.model import CharacterCNN
+from src.preprocess import transform
 
 
 if torch.cuda.is_available():
@@ -15,7 +15,7 @@ else:
 
 # Load the blueprint and the best weights
 model = CharacterCNN().to(device)
-checkpoint = torch.load("best_character_model.pth", map_location=device, weights_only=False)
+checkpoint = torch.load("src/best_character_model.pth", map_location=device, weights_only=False)
 model.load_state_dict(checkpoint["model_state"])
 model.eval() 
 print("Model loaded successfully!")
