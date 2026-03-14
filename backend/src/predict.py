@@ -135,7 +135,7 @@ if __name__ == "__main__":
     except FileNotFoundError:
         print("Error: Could not find folder. Check your folder path!")
     
-    image_path = "/Users/lodrr/python-projects/Handwriting-Recognition-1/backend/src/Image2.png" 
+    image_path = "./Image2.png" 
     try:
         predict(image_path)
     except FileNotFoundError:
