@@ -1,11 +1,9 @@
-from django.shortcuts import render, HttpResponse
-import json
-import os
+from __future__ import annotations
 from src import predict
-from pathlib import Path
 from PIL import Image, ImageOps
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import JsonResponse
+from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
 
 
 @ensure_csrf_cookie
@@ -24,7 +22,9 @@ raw_image = ImageOps.exif_transpose(img)
 @ensure_csrf_cookie
 def predictRoute(request):
     if (request.method == "POST"):
-        print(request.POST)
-        result = predict.predict(raw_image)
-        jsonResult = {"character_result": f"{result}"}
-        return HttpResponse(result)
+        image_file: InMemoryUploadedFile | UploadedFile = request.FILES.get(
+            'image')
+        
+        result = predict.predict(image_file.file)
+
+        return JsonResponse({"Result": result})

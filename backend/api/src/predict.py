@@ -47,13 +47,11 @@ def check_image_quality(processed_tensor):
     return True, "OK"  
 
 
-def predict(raw_image):
+def predict(image):
     # 1. Load the raw image
-    #img = Image.open(image_path)
-    #raw_image = ImageOps.exif_transpose(img)
-    
+    img = Image.open(image)
     # Forces Python to physically rotate the image if a smartphone saved it sideways
-    raw_image = ImageOps.exif_transpose(raw_image)
+    raw_image = ImageOps.exif_transpose(img)
     
     # 2. Process it using your custom external module!
     processed_image = transform(raw_image)

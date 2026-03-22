@@ -1,30 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import uploadIcon from "../assets/upload-icon.svg";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 const Hero = () => {
   const [image, setImage] = useState(null);
+  const [message, setMessage] = useState('');
   axios.defaults.xsrfHeaderName = "X-CSRFToken";
   axios.defaults.xsrfCookieName = "csrftoken";
   axios.defaults.withCredentials = true; // Ensures cookies are sent with cross-site requests
 
-  const handleImage = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      setImage(event.target.files[0]);
-    }
+  const handleImage = async (event) => {
+    setImage(event.target.files[0])
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("image", event.target.files[0]);
 
     axios
       .post("http://localhost:8000/predict/", formData, {
         headers: {
           "X-CSRFToken": Cookies.get("csrftoken"),
+          "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
-        console.log(`Successfully sent. Result: ${res.data}`);
-      })
+      .then((res) => setMessage(res.data.Result))
       .catch((error) => {
         console.log(error);
       });
@@ -73,13 +71,17 @@ const Hero = () => {
             onChange={handleImage}
           />
 
+          <div className="flex justify-center">
           {image && (
             <img src={URL.createObjectURL(image)} alt="Uploaded Image" />
           )}
+          </div>
+          
         </div>
         <div className="flex flex-col items-center h-full py-2">
           <div className="flex-1">RESULT</div>
-          <div className="flex-1 text-gray-500">RESULTS WILL APPEAR HERE</div>
+          {message ? <div className="flex-1 text-white text-3xl">{message}</div> : <div className="flex-1 text-gray-500">RESULTS WILL APPEAR HERE</div>}
+          
           <div>
             <button className="flex-1 ease-in duration-150 hover:bg-gray-800 hover:cursor-pointer px-4 py-2 rounded-2xl">
               View in Dashboard
